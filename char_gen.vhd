@@ -45,17 +45,17 @@ architecture structural of char_gen is
 
 signal address_sig, data_from_font : std_logic_vector(7 downto 0);
 
-signal data_sig : std_logic_vector(6 downto 0);
+signal data_sig : std_logic_vector(7 downto 0);
 
 signal data_cat_row : std_logic_vector(10 downto 0);
-
-signal row_col_sig : std_logic_vector(11 downto 0);
 
 signal row_buffer : std_logic_vector(3 downto 0);
 
 signal pixel_high : std_logic;
 
-signal count, count_next, row_col_sig : std_logic_vector(11 downto 0);
+signal count, count_next : std_logic_vector(11 downto 0);
+
+signal row_col_sig : std_logic_vector(13 downto 0);
 
 signal sel_reg1, sel_reg2, sel_next1, sel_next2 : std_logic_vector(2 downto 0);
 
@@ -65,7 +65,7 @@ begin
 	process(clk,row)
 	begin
 		if rising_edge(clk) then
-			row_buffer <= row;
+			row_buffer <= row(3 downto 0);
 		end if;
 	end process;
 
@@ -74,7 +74,7 @@ begin
 		   clk => clk,
 		   we => write_en,
 		   address_a => count, 
-		   address_b => row_col_sig, 
+		   address_b => row_col_sig(11 downto 0), 
 		   data_in => ascii_to_write, 
 		   data_out_a => open, 
 		   data_out_b => data_sig

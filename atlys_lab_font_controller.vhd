@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company: 
--- Engineer: 
+-- Engineer: C2C Michael Bentley
 -- 
 -- Create Date:    09:47:04 02/21/2014 
 -- Design Name: 
@@ -8,7 +8,7 @@
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
--- Description: 
+-- Description: Top-level component of a font controller.
 --
 -- Dependencies: 
 --
@@ -26,7 +26,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx primitives in this code.
---library UNISIM;
+library UNISIM;
 use UNISIM.VComponents.all;
 
 entity atlys_lab_font_controller is
@@ -34,6 +34,7 @@ entity atlys_lab_font_controller is
              clk    : in  std_logic; -- 100 MHz
              reset  : in  std_logic;
              start  : in  std_logic;
+				 button_input : std_logic;
              switch : in  std_logic_vector(7 downto 0);
              led    : out std_logic_vector(7 downto 0);
              tmds   : out std_logic_vector(3 downto 0);
@@ -45,15 +46,16 @@ architecture bentley of atlys_lab_font_controller is
 
 	 signal serialize_clk, serialize_clk_n : std_logic;
 	 
-	 signal pixel_clk, h_sync, v_sync, blank, v_comp : std_logic;
+	 signal button, pixel_clk, h_sync, v_sync, blank, v_comp : std_logic;
+	 
+	 signal h_sync1, h_sync2, v_sync1, v_sync2, blank1, blank2 : std_logic;
 	 
 	 signal red_s, green_s, blue_s, clock_s : std_logic;
 	 
 	 signal red, green, blue : std_logic_vector(7 downto 0);
 	 
 	 signal row_sig, col_sig : unsigned(10 downto 0);
-	 
-	 signal ball_x, ball_y, paddle_y : unsigned(10 downto 0);
+
 begin
 
     -- Clock divider - creates pixel clock from 100MHz clock
@@ -85,28 +87,59 @@ begin
 
 	 vga_inst: entity work.vga_sync(moore)
 			port map(
-				clk  => pixel_clk,
-				reset => reset,
-				h_sync => h_sync,
-				v_sync => v_sync,
-				v_completed => v_comp,
-				blank => blank,
-				row => row_sig,
-				column => col_sig
-		   );
-	 
-	 pixel_inst: entity work.pixel_gen(sel_arch)
+							clk  => pixel_clk,
+							reset => reset,
+							h_sync => h_sync,
+							v_sync => v_sync,
+							v_completed => v_comp,
+							blank => blank,
+							row => row_sig,
+							column => col_sig
+						);
+						
+	 char_gen_inst: entity work.char_gen(structural)
 			port map(
-				row => row_sig, 
-				column => col_sig, 
-				blank => blank,
-				ball_x => ball_x,
-				ball_y =>  ball_y,
-				paddle_y => paddle_y,
-				r => red, 
-				g => green, 
-				b => blue
-			);
+							clk => pixel_clk,
+							blank => blank,
+							reset => reset,
+							row => std_logic_vector(row_sig),
+							column => std_logic_vector(col_sig),
+							ascii_to_write => switch,
+							write_en => button,
+							r => red,
+							g => green,
+							b => blue
+						);
+				
+				
+	 button_inst: entity work.input_to_pulse(moore)
+			port map(
+							clk => pixel_clk,
+							reset => reset,
+							input => button_input,
+							pulse => button
+						);
+						
+	--Signal piping
+	
+	process(pixel_clk)
+	begin
+		if(rising_edge(pixel_clk)) then
+			h_sync1 <= h_sync;
+			v_sync1 <= v_sync;
+			blank1 <= blank;
+		end if;
+	end process;
+	
+	process(pixel_clk)
+	begin
+		if(rising_edge(pixel_clk)) then
+			h_sync2 <= h_sync1;
+			v_sync2 <= v_sync1;
+			blank2 <= blank1;
+		end if;
+	end process;
+	 
 
     -- Convert VGA signals to HDMI (actually, DVID ... but close enough)
     inst_dvid: entity work.dvid
@@ -117,9 +150,9 @@ begin
                 red_p     => red,
                 green_p   => green,
                 blue_p    => blue,
-                blank     => blank,
-                hsync     => h_sync,
-                vsync     => v_sync,
+                blank     => blank2,
+                hsync     => h_sync2,
+                vsync     => v_sync2,
                 -- outputs to TMDS drivers
                 red_s     => red_s,
                 green_s   => green_s,
