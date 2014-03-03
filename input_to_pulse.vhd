@@ -78,7 +78,7 @@ begin
 				count <= (others => '0');
 			end if;
 			
-			if( count >= 10 ) then
+			if( count >= 1000 ) then
 				button_debounced <= '1';
 				count <= (others => '0');
 			end if;
