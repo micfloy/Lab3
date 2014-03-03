@@ -41,17 +41,16 @@ signal output_sig : std_logic;
 
 begin
 	
-	output <= output_sig;
 	
 	with sel select
-		output_sig <= data(7) when "000",
-				        data(6) when "001",
-					     data(5) when "010",
-					     data(4) when "011",
-						  data(3) when "100",
-					     data(2) when "101",
-					     data(1) when "110",
-					     data(0) when others;
+		output	<= data(7) when "000",
+				      data(6) when "001",
+					   data(5) when "010",
+					   data(4) when "011",
+						data(3) when "100",
+					   data(2) when "101",
+					   data(1) when "110",
+					   data(0) when others;
 				 
 end sel_arch;
 

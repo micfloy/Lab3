@@ -42,7 +42,7 @@ entity atlys_lab_font_controller is
 end atlys_lab_font_controller;
 
 architecture bentley of atlys_lab_font_controller is
-    -- TODO: Signals, as needed
+
 	 signal serialize_clk, serialize_clk_n : std_logic;
 	 
 	 signal pixel_clk, h_sync, v_sync, blank, v_comp : std_logic;
