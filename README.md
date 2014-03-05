@@ -23,7 +23,7 @@ This is a brief overview of the components I created for this lab.
 
 ###Block Diagram
 
-![Very blocked, such diagram](https://raw.github.com/micfloy/Lab2/master/schematic.png)
+![Very blocked, such diagram](https://raw.github.com/micfloy/Lab3/master/schematic.PNG)
 
 As can easily be seen, the majority of the components were connected within `char_gen` and components from the previous labs were connected in the top level design.
 
@@ -86,7 +86,7 @@ This module was based on my button module for Lab2, but made more generic to app
 
 ###State Diagram
 
-![Triangle of Death](https://raw.github.com/micfloy/Lab2/master/button_state_diagram.PNG)
+![Triangle of Death](https://raw.github.com/micfloy/Lab3/master/button_state_diagram.PNG)
 
 This diagram shows the outline of how the machine behaves.  The essential element is the debouncing that occurs inside of `button_held` state.  This prevents the button from pulsing multiple times with each press.
 
