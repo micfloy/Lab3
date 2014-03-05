@@ -23,7 +23,7 @@ This is a brief overview of the components I created for this lab.
 
 ###Block Diagram
 
-![Very blocked, such diagram](https://raw.github.com/micfloy/Lab2/master/schematic.PNG)
+![Very blocked, such diagram](https://raw.github.com/micfloy/Lab2/master/schematic.png)
 
 As can easily be seen, the majority of the components were connected within `char_gen` and components from the previous labs were connected in the top level design.
 
